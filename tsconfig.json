@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "target": "ES6",
+      "lib": ["ES6", "dom", "webworker"],
+      "module": "ESNext",
+      "strict": true,
+      "outDir": "dist",
+      "sourceMap": true
+    },
+    "include": ["src/**/*.ts"]
+  }
+  

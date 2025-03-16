@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "ChatGPT Question Log",
+    "version": "1.0",
+    "description": "A collection of questions asked withing a chat session in ChatGPT arranged in a table.",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://chatgpt.com/c/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    }
+}
