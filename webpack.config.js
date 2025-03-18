@@ -43,13 +43,14 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'src/popup.html', to: 'popup.html' },
+        { from: 'src/options.html', to: 'options.html' },
         { from: 'src/manifest.json', to: 'manifest.json' },
       ],
     }),
   ],
 
-  mode: 'development',
-  //   devtool: 'source-map',
+  mode: 'production',
+  devtool: 'source-map',
 
   watch: true,
 };

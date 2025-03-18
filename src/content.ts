@@ -1,44 +1,43 @@
+import { Question } from './utils/definitions';
+import { getQuestions, saveQuestions } from './utils/storage';
+
 console.log('Content script loaded.');
-type Question = {
-  id: string;
-  question: string;
-};
-const questions: Question[] = [];
 
 const waitForContent = setInterval(() => {
   const questionElements: NodeListOf<HTMLDivElement> =
     document.querySelectorAll('[data-message-id]');
 
   if (questionElements.length) {
+    let questions: Question[] = [];
+
     questionElements.forEach((element) => {
-      questions.push({
-        id: element.dataset?.messageId ?? '',
-        question: element.textContent ?? '',
-      });
+      const question = element.querySelector('.whitespace-pre-wrap');
+      const isValidTitle = question?.textContent?.trim();
+
+      if (isValidTitle) {
+        questions.push({
+          id: element.dataset?.messageId ?? '',
+          question: question?.textContent ?? '',
+        });
+      }
     });
-    console.log(questions);
+
+    saveQuestions(questions);
+    getQuestions().then((questions) => console.log('questions:', questions));
+
     clearInterval(waitForContent); // Stop checking
   }
 }, 500); // Check every 500ms
 
-const view = {
-  createElement(
-    type: string,
-    atts: { [name: string]: string },
-    content?: string
-  ): HTMLElement {
-    const element = document.createElement(type);
+const sendButton = document.querySelector(
+  '[data-testid="send-button"]'
+) as HTMLButtonElement;
 
-    for (const att in atts) {
-      if (Object.prototype.hasOwnProperty.call(atts, att)) {
-        element.setAttribute(att, atts[att]);
-      }
-    }
-
-    if (content) {
-      element.textContent = content;
-    }
-
-    return element;
-  },
-};
+if (sendButton instanceof HTMLButtonElement) {
+  console.log({ sendButton });
+  sendButton.addEventListener('click', function () {
+    console.log('Send Button clicked');
+  });
+} else {
+  console.log('sendButton not found!');
+}
