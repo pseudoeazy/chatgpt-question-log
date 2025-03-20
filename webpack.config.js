@@ -9,6 +9,7 @@ module.exports = {
     content: './src/content.ts',
     popup: './src/popup.ts',
     styles: './src/styles.scss',
+    contentStyles: './src/content.scss',
   },
 
   output: {
@@ -37,7 +38,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(), // Cleans `dist/` before every build
     new MiniCssExtractPlugin({
-      filename: 'styles.css',
+      filename: '[name].css', // Generates styles.css and contentStyles.css separately
     }),
 
     new CopyWebpackPlugin({

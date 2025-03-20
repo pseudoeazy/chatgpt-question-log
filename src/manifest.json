@@ -11,9 +11,13 @@
             "matches": [
                 "https://chatgpt.com/c/*"
             ],
+            "css": [
+                "contentStyles.css"
+            ],
             "js": [
                 "content.js"
-            ]
+            ],
+            "run_at": "document_end"
         }
     ],
     "action": {
