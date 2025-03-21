@@ -1,5 +1,5 @@
 import { Question } from './utils/definitions';
-import { getQuestions, saveQuestions } from './utils/storage';
+import { getQuestions, Message, saveQuestions } from './utils/storage';
 import { view } from './utils/ui';
 
 console.log('ChatGPT Question Log: Content script loaded.');
@@ -24,7 +24,6 @@ const waitForContent = setInterval(() => {
     });
 
     saveQuestions(questions);
-    getQuestions().then((questions) => console.log('questions:', questions));
     handleToggleSwitch();
 
     clearInterval(waitForContent); // Stop checking
@@ -40,7 +39,6 @@ function getNavElement() {
 function handleToggleSwitch() {
   if (!document.getElementById('cqlSwitchContainer')) {
     const navElement = getNavElement();
-    // console.log({ composer, navElement });
 
     if (navElement) {
       const rightNavElement = navElement.lastElementChild as HTMLDivElement;
@@ -70,8 +68,6 @@ function handleToggleSwitch() {
       containerElement.appendChild(labelEl);
       rightNavElement.appendChild(containerElement);
     }
-  } else {
-    console.log('Sidebar switch already exist');
   }
   handleSidebar();
 }
@@ -103,11 +99,14 @@ function handleSubmitQuery() {
   ) as HTMLButtonElement;
 
   if (sendButton instanceof HTMLButtonElement) {
-    console.log({ sendButton });
-    sendButton.addEventListener('click', function () {
-      console.log('Send Button clicked');
-    });
-  } else {
-    console.log('sendButton not found!');
+    sendButton.addEventListener('click', function () {});
   }
 }
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === Message.TARGET_ID) {
+    view.handleScroll(`[data-message-id="${message.targetId}"]`);
+    sendResponse('handleScroll completed!');
+  }
+  return true;
+});
