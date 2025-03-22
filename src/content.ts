@@ -1,34 +1,40 @@
 import { Question } from './utils/definitions';
-import { getQuestions, Message, saveQuestions } from './utils/storage';
+import { Message, saveQuestions } from './utils/storage';
 import { view } from './utils/ui';
 
 console.log('ChatGPT Question Log: Content script loaded.');
 
-const waitForContent = setInterval(() => {
-  const questionElements: NodeListOf<HTMLDivElement> =
-    document.querySelectorAll('[data-message-id]');
+function setup() {
+  console.log('setup called');
 
-  if (questionElements.length) {
-    const questions: Question[] = [];
+  const waitForContent = setInterval(() => {
+    const questionElements: NodeListOf<HTMLDivElement> =
+      document.querySelectorAll('[data-message-id]');
 
-    questionElements.forEach((element) => {
-      const question = element.querySelector('.whitespace-pre-wrap');
-      const isValidTitle = question?.textContent?.trim();
+    if (questionElements.length) {
+      const questions: Question[] = [];
 
-      if (isValidTitle) {
-        questions.push({
-          id: element.dataset?.messageId ?? '',
-          question: question?.textContent ?? '',
-        });
-      }
-    });
+      questionElements.forEach((element) => {
+        const question = element.querySelector('.whitespace-pre-wrap');
+        const isValidTitle = question?.textContent?.trim();
 
-    saveQuestions(questions);
-    handleToggleSwitch();
+        if (isValidTitle) {
+          questions.push({
+            id: element.dataset?.messageId ?? '',
+            question: question?.textContent ?? '',
+          });
+        }
+      });
 
-    clearInterval(waitForContent); // Stop checking
-  }
-}, 500); // Check every 500ms
+      saveQuestions(questions);
+      handleToggleSwitch(); // Render Toggle switch
+      handleSidebar(); // Render sidebar
+
+      clearInterval(waitForContent); // Stop checking
+    }
+  }, 500); // Check every 500ms
+}
+setup();
 
 function getNavElement() {
   const composer = document.querySelector('.composer-parent');
@@ -69,7 +75,6 @@ function handleToggleSwitch() {
       rightNavElement.appendChild(containerElement);
     }
   }
-  handleSidebar();
 }
 
 function handleSidebar() {
@@ -102,6 +107,21 @@ function handleSubmitQuery() {
     sendButton.addEventListener('click', function () {});
   }
 }
+
+const detectUrlChange = () => {
+  let currentUrl = location.href;
+
+  const observer = new MutationObserver(() => {
+    if (location.href !== currentUrl) {
+      // console.log('detectUrlChange URL:', location.href);
+      currentUrl = location.href;
+      setup();
+    }
+  });
+
+  observer.observe(document, { subtree: true, childList: true });
+};
+detectUrlChange();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === Message.TARGET_ID) {

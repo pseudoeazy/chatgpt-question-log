@@ -58,7 +58,7 @@
   border-bottom-right-radius: 8px;
 }
 
-tr:hover:not(:first-child) {
+.cql-table tr:hover:not(:first-child) {
   cursor: pointer;
   background-color: rgba(rgb(34, 197, 94), 0.5);
 }

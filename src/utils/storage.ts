@@ -9,10 +9,9 @@ type ExtensionStorage = {
 };
 
 export function saveQuestions(questions: Question[]) {
-  return new Promise<void>((resolve) => {
+  return new Promise<string>((resolve) => {
     chrome.storage.local.set({ questions }, () => {
-      console.log('questions saved!');
-      resolve();
+      resolve('questions saved!');
     });
   });
 }

@@ -1,3 +1,2 @@
 // content script
-1. get questions on url change
-2. get questions if a new question is asked
+1. get questions if a new question is asked
