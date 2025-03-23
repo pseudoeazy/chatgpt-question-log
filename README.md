@@ -6,10 +6,10 @@
 
 ## **Features**
 
-✅ Logs all the questions you ask during a chat session.
-✅ Displays the questions in a structured table.
-✅ Click on a question to jump directly to where it was asked on the page.
-✅ Enhances your workflow by making it easy to revisit past queries.
+- Logs all the questions you ask during a chat session.
+- Displays the questions in a structured table.
+- Click on a question to jump directly to where it was asked on the page.
+- Enhances your workflow by making it easy to revisit past queries.
 
 ## **Installation**
 
