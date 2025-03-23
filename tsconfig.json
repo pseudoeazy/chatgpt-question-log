@@ -1,12 +1,15 @@
 {
-    "compilerOptions": {
-      "target": "ES6",
-      "lib": ["ES6", "dom", "webworker"],
-      "module": "ESNext",
-      "strict": true,
-      "outDir": "dist",
-      "sourceMap": true
-    },
-    "include": ["src/**/*.ts"]
-  }
-  
+  "compilerOptions": {
+    "esModuleInterop": true,    
+    "moduleResolution": "node",      
+    "resolveJsonModule": true,    
+    "types": ["node", "jest","chrome"],      
+    "target": "ES6",
+    "lib": ["ES6", "dom", "webworker"],
+    "module": "ESNext",
+    "strict": true,
+    "outDir": "dist",
+    "sourceMap": true
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"]  
+}
