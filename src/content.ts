@@ -27,8 +27,10 @@ function setup() {
       });
 
       saveQuestions(questions);
+      console.log({ questions });
       handleToggleSwitch(); // Render Toggle switch
       handleSidebar(); // Render sidebar
+      // handleNewQuestion(); // handle new question
 
       clearInterval(waitForContent); // Stop checking
     }
@@ -78,37 +80,69 @@ function handleToggleSwitch() {
 }
 
 function handleSidebar() {
-  if (!document.getElementById('cqlSiderBar')) {
-    const navElement = getNavElement();
-    const switchEl = document.getElementById('cqlSwitch');
+  let cqlSiderBar = document.getElementById('cqlSiderBar');
 
-    const cqlSiderBar = view.createElement('aside', {
+  if (cqlSiderBar) {
+    cqlSiderBar.innerHTML = '';
+  } else {
+    cqlSiderBar = view.createElement('aside', {
       class: 'cql-sidebar cql-sidebar-hide',
       id: 'cqlSiderBar',
     });
+  }
 
-    if (navElement && switchEl) {
-      navElement.appendChild(cqlSiderBar);
-      view.renderQuestionLog(cqlSiderBar);
+  const navElement = getNavElement();
+  const switchEl = document.getElementById('cqlSwitch');
 
-      switchEl.addEventListener('change', () => {
-        cqlSiderBar.classList.toggle('cql-sidebar-hide');
-      });
+  if (navElement && switchEl) {
+    navElement.appendChild(cqlSiderBar);
+    view.renderQuestionLog(cqlSiderBar);
+
+    switchEl.addEventListener('change', () => {
+      cqlSiderBar.classList.toggle('cql-sidebar-hide');
+    });
+  }
+}
+
+function handleNewQuestion() {
+  console.log('handleNewQuestion');
+
+  const waitForContent = setInterval(() => {
+    console.log('handleNewQuestion callback');
+    const queryNodes: NodeListOf<HTMLDivElement> =
+      document.querySelectorAll('[data-message-id]');
+
+    if (queryNodes.length) {
+      console.log('composer');
+      const composer = document.querySelector('.composer-parent');
+      if (composer) {
+        console.log('chatSession');
+        const chatSession = composer.children[1];
+        const targetNode = chatSession.querySelector('article')?.parentElement;
+
+        if (targetNode) {
+          console.log(targetNode);
+
+          const observer = new MutationObserver((mutations) => {
+            for (let mutation of mutations) {
+              if (mutation.type === 'childList') {
+                console.log('handleNewQuestion mutation');
+                setup();
+              }
+            }
+          });
+          observer.observe(targetNode, { childList: true });
+        }
+      }
+      clearInterval(waitForContent);
+    } else {
+      console.log('query node does not exist');
     }
-  }
+  }, 500);
 }
+handleNewQuestion();
 
-function handleSubmitQuery() {
-  const sendButton = document.querySelector(
-    '[data-testid="send-button"]'
-  ) as HTMLButtonElement;
-
-  if (sendButton instanceof HTMLButtonElement) {
-    sendButton.addEventListener('click', function () {});
-  }
-}
-
-const detectUrlChange = () => {
+function detectUrlChange() {
   let currentUrl = location.href;
 
   const observer = new MutationObserver(() => {
@@ -120,7 +154,7 @@ const detectUrlChange = () => {
   });
 
   observer.observe(document, { subtree: true, childList: true });
-};
+}
 detectUrlChange();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {

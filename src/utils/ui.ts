@@ -64,7 +64,9 @@ export const view = {
         const targetId = target.dataset.cqlId;
 
         if (targetId) {
-          if (!chrome?.tabs) {
+          const isContentScript = !chrome?.tabs;
+
+          if (isContentScript) {
             view.handleScroll(`[data-message-id="${targetId}"]`);
           } else {
             view.handlePopUpScroll(targetId);
