@@ -1,2 +1,0 @@
-// content script
-1. get questions if a new question is asked

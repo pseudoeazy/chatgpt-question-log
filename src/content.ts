@@ -4,39 +4,74 @@ import { view } from './utils/ui';
 
 console.log('ChatGPT Question Log: Content script loaded.');
 
-function setup() {
-  console.log('setup called');
+function collectQuestions(): Question[] {
+  const questionElements: NodeListOf<HTMLDivElement> =
+    document.querySelectorAll('[data-message-id]');
 
-  const waitForContent = setInterval(() => {
-    const questionElements: NodeListOf<HTMLDivElement> =
-      document.querySelectorAll('[data-message-id]');
+  const questions: Question[] = [];
 
-    if (questionElements.length) {
-      const questions: Question[] = [];
+  questionElements.forEach((element) => {
+    const question = element.querySelector('.whitespace-pre-wrap');
+    const isValidTitle = question?.textContent?.trim();
 
-      questionElements.forEach((element) => {
-        const question = element.querySelector('.whitespace-pre-wrap');
-        const isValidTitle = question?.textContent?.trim();
-
-        if (isValidTitle) {
-          questions.push({
-            id: element.dataset?.messageId ?? '',
-            question: question?.textContent ?? '',
-          });
-        }
+    if (isValidTitle) {
+      questions.push({
+        id: element.dataset?.messageId ?? '',
+        question: question?.textContent ?? '',
       });
-
-      saveQuestions(questions);
-      console.log({ questions });
-      handleToggleSwitch(); // Render Toggle switch
-      handleSidebar(); // Render sidebar
-      // handleNewQuestion(); // handle new question
-
-      clearInterval(waitForContent); // Stop checking
     }
-  }, 500); // Check every 500ms
+  });
+
+  return questions;
+}
+
+function waitForElements(
+  selector: string,
+  callback: () => void,
+  interval = 500
+) {
+  const waitForContent = setInterval(() => {
+    const elements = document.querySelectorAll(selector);
+    if (elements.length) {
+      callback();
+      clearInterval(waitForContent);
+    }
+  }, interval);
+}
+
+function setup() {
+  waitForElements('[data-message-id]', () => {
+    const questions = collectQuestions();
+    saveQuestions(questions);
+    handleToggleSwitch(); // Render toggle switch
+    handleSidebar(); // Render sidebar
+  });
 }
 setup();
+
+function handleNewQuestion() {
+  waitForElements('[data-message-id]', () => {
+    const composer = document.querySelector('.composer-parent');
+
+    if (!composer) return;
+
+    const chatSession = composer.children[1];
+    const targetNode = chatSession.querySelector('article')?.parentElement;
+
+    if (!targetNode) return;
+
+    const observer = new MutationObserver((mutations) => {
+      for (let mutation of mutations) {
+        if (mutation.type === 'childList') {
+          setup();
+        }
+      }
+    });
+
+    observer.observe(targetNode, { childList: true });
+  });
+}
+handleNewQuestion();
 
 function getNavElement() {
   const composer = document.querySelector('.composer-parent');
@@ -103,44 +138,6 @@ function handleSidebar() {
     });
   }
 }
-
-function handleNewQuestion() {
-  console.log('handleNewQuestion');
-
-  const waitForContent = setInterval(() => {
-    console.log('handleNewQuestion callback');
-    const queryNodes: NodeListOf<HTMLDivElement> =
-      document.querySelectorAll('[data-message-id]');
-
-    if (queryNodes.length) {
-      console.log('composer');
-      const composer = document.querySelector('.composer-parent');
-      if (composer) {
-        console.log('chatSession');
-        const chatSession = composer.children[1];
-        const targetNode = chatSession.querySelector('article')?.parentElement;
-
-        if (targetNode) {
-          console.log(targetNode);
-
-          const observer = new MutationObserver((mutations) => {
-            for (let mutation of mutations) {
-              if (mutation.type === 'childList') {
-                console.log('handleNewQuestion mutation');
-                setup();
-              }
-            }
-          });
-          observer.observe(targetNode, { childList: true });
-        }
-      }
-      clearInterval(waitForContent);
-    } else {
-      console.log('query node does not exist');
-    }
-  }, 500);
-}
-handleNewQuestion();
 
 function detectUrlChange() {
   let currentUrl = location.href;
