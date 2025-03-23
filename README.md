@@ -13,7 +13,7 @@
 
 ## **Screenshots**
 
-![Table Log](assets/table-log.png)
+![Table Log](src/assets/table-log.png)
 
 ## **Installation**
 
