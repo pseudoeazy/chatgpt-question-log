@@ -17,7 +17,7 @@
 
 ## **Installation**
 
-1. Download the extension files.
+1. [**Download**](https://github.com/pseudoeazy/chatgpt-question-log/releases/tag/v1.0) the extension file.
 2. Open **Chrome** and go to `chrome://extensions/`.
 3. Enable **Developer mode** (toggle in the top right corner).
 4. Click **"Load unpacked"** and select the extension folder.
