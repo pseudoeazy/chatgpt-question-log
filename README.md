@@ -35,6 +35,16 @@
 
 The extension requires access to web pages where ChatGPT AI chats **occur** to log your questions and provide navigation. It **does not** collect or store personal data.
 
+## Privacy Policy
+
+This Chrome extension respects your privacy. It **does not collect, store, or share any user data**.
+
+- No personal information is stored or transmitted.
+- No browsing activity is tracked.
+- No third-party services are used to collect user data.
+
+This extension operates entirely on your device, ensuring your privacy and security. If you have any questions, feel free to send a message.
+
 ## **Support & Feedback**
 
 If you have any issues or suggestions, feel free to reach out!
