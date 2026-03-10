@@ -5,7 +5,7 @@ export const view = {
   createElement<T extends HTMLElement>(
     type: keyof HTMLElementTagNameMap,
     atts?: { [name: string]: string },
-    content?: string
+    content?: string,
   ): T {
     const element = document.createElement(type) as T;
 
@@ -26,7 +26,7 @@ export const view = {
 
   generateQuestionLog(
     questions: Question[],
-    maxQuestionLength = 24
+    maxQuestionLength = 24,
   ): HTMLTableElement {
     const table = this.createElement<HTMLTableElement>('table', {
       class: 'cql-table',
@@ -44,7 +44,7 @@ export const view = {
       const thId = this.createElement(
         'td',
         { 'data-cql-id': id },
-        `${idx + 1}`
+        `${idx + 1}`,
       );
       const query =
         question.length > maxQuestionLength
@@ -92,27 +92,37 @@ export const view = {
     });
   },
 
-  handlePopUpScroll(targetId: string) {
-    chrome.tabs.query({ active: true }, function (tabs) {
-      const activeTab = tabs[0];
-      if (activeTab) {
-        chrome.tabs.sendMessage(
-          activeTab.id!,
-          {
-            type: Message.TARGET_ID,
-            targetId,
-          },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              // Handle the error, e.g., the popup is closed.
-              console.log('error:', chrome.runtime.lastError);
-              return;
-            } else {
-              console.log('response from content:' + response);
-            }
+  handlePopUpScroll(targetId: string): void {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+
+      if (!tab || tab.id === undefined) return;
+
+      const tabId: number = tab.id;
+
+      const message = {
+        type: Message.TARGET_ID,
+        targetId,
+      };
+
+      chrome.tabs.sendMessage(tabId, message, async (response?: unknown) => {
+        if (chrome.runtime.lastError) {
+          try {
+            await chrome.scripting.executeScript({
+              target: { tabId },
+              files: ['content.js'],
+            });
+
+            chrome.tabs.sendMessage(tabId, message);
+          } catch (err) {
+            console.error('Failed to inject script:', err);
           }
-        );
-      }
+
+          return;
+        }
+
+        console.log('response:', response);
+      });
     });
   },
 

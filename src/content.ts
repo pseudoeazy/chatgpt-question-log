@@ -87,8 +87,6 @@ function handleToggleSwitch() {
     ) as HTMLDivElement;
 
     if (navElement && headerLastElement) {
-      const rightNavElement = navElement.lastElementChild as HTMLDivElement;
-
       const containerElement = view.createElement('div', {
         class: 'cql-switch-container"',
         id: 'cqlSwitchContainer',
@@ -112,7 +110,6 @@ function handleToggleSwitch() {
       labelEl.appendChild(checkboxEl);
       labelEl.appendChild(spanEl);
       containerElement.appendChild(labelEl);
-      // rightNavElement.appendChild(containerElement);
       headerLastElement.insertAdjacentElement('beforebegin', containerElement);
     }
   }
@@ -124,7 +121,6 @@ function handleSidebar() {
   if (cqlSiderBar) {
     cqlSiderBar.innerHTML = '';
   } else {
-    //cql-sidebar-hide
     cqlSiderBar = view.createElement('aside', {
       class: 'cql-sidebar cql-sidebar-hide',
       id: 'cqlSiderBar',
