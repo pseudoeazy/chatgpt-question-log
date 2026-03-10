@@ -28,7 +28,7 @@ function collectQuestions(): Question[] {
 function waitForElements(
   selector: string,
   callback: () => void,
-  interval = 500
+  interval = 500,
 ) {
   const waitForContent = setInterval(() => {
     const elements = document.querySelectorAll(selector);
@@ -82,8 +82,11 @@ function getNavElement() {
 function handleToggleSwitch() {
   if (!document.getElementById('cqlSwitchContainer')) {
     const navElement = getNavElement();
+    const headerLastElement = document.querySelector(
+      '#page-header > div:last-of-type',
+    ) as HTMLDivElement;
 
-    if (navElement) {
+    if (navElement && headerLastElement) {
       const rightNavElement = navElement.lastElementChild as HTMLDivElement;
 
       const containerElement = view.createElement('div', {
@@ -109,7 +112,8 @@ function handleToggleSwitch() {
       labelEl.appendChild(checkboxEl);
       labelEl.appendChild(spanEl);
       containerElement.appendChild(labelEl);
-      rightNavElement.appendChild(containerElement);
+      // rightNavElement.appendChild(containerElement);
+      headerLastElement.insertAdjacentElement('beforebegin', containerElement);
     }
   }
 }
@@ -120,6 +124,7 @@ function handleSidebar() {
   if (cqlSiderBar) {
     cqlSiderBar.innerHTML = '';
   } else {
+    //cql-sidebar-hide
     cqlSiderBar = view.createElement('aside', {
       class: 'cql-sidebar cql-sidebar-hide',
       id: 'cqlSiderBar',
@@ -144,7 +149,7 @@ function detectUrlChange() {
 
   const observer = new MutationObserver(() => {
     if (location.href !== currentUrl) {
-      // console.log('detectUrlChange URL:', location.href);
+      console.log('detectUrlChange URL:', location.href);
       currentUrl = location.href;
       setup();
     }

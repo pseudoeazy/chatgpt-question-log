@@ -1,6 +1,6 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Extension Installed!');
-  chrome.storage.sync.set({
+  console.log('ChatGPT Question Log Extension Installed!');
+  chrome.storage.local.set({
     questions: [],
   });
 });

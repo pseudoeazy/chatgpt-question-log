@@ -72,10 +72,28 @@
   max-height: 90vh;
   height: 100%;
   padding: 0.25rem;
-  transition: all 0.5s linear;
   overflow-y: scroll;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  /* 1. Tell CSS to allow "discrete" properties (like display) to be transitioned */
+  transition:
+    transform 0.5s ease,
+    display 0.5s ease allow-discrete;
+
+  /* The visible state */
+  display: block;
+  transform: translateX(0);
 }
+
 .cql-sidebar-hide {
-  transform: translateX(250px);
+  /* 2. When hidden, it will now wait 0.5s before applying display: none */
+  display: none;
+  transform: translateX(100%);
+}
+
+/* 3. Define the "before-entry" state so it can animate back IN from display: none */
+@starting-style {
+  .cql-sidebar:not(.cql-sidebar-hide) {
+    transform: translateX(100%);
+  }
 }
