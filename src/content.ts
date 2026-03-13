@@ -40,12 +40,16 @@ function waitForElements(
 }
 
 function setup() {
-  waitForElements('[data-message-id]', () => {
-    const questions = collectQuestions();
-    saveQuestions(questions);
-    handleToggleSwitch(); // Render toggle switch
-    handleSidebar(); // Render sidebar
-  });
+  waitForElements(
+    '[data-message-id]',
+    () => {
+      const questions = collectQuestions();
+      saveQuestions(questions);
+      handleToggleSwitch(); // Render toggle switch
+      handleSidebar(); // Render sidebar
+    },
+    1000,
+  );
 }
 setup();
 
@@ -82,11 +86,11 @@ function getNavElement() {
 function handleToggleSwitch() {
   if (!document.getElementById('cqlSwitchContainer')) {
     const navElement = getNavElement();
-    const headerLastElement = document.querySelector(
+    const headerLastElementChild = document.querySelector(
       '#page-header > div:last-of-type',
     ) as HTMLDivElement;
 
-    if (navElement && headerLastElement) {
+    if (navElement && headerLastElementChild) {
       const containerElement = view.createElement('div', {
         class: 'cql-switch-container"',
         id: 'cqlSwitchContainer',
@@ -110,7 +114,10 @@ function handleToggleSwitch() {
       labelEl.appendChild(checkboxEl);
       labelEl.appendChild(spanEl);
       containerElement.appendChild(labelEl);
-      headerLastElement.insertAdjacentElement('beforebegin', containerElement);
+      headerLastElementChild.insertAdjacentElement(
+        'beforebegin',
+        containerElement,
+      );
     }
   }
 }
@@ -145,7 +152,7 @@ function detectUrlChange() {
 
   const observer = new MutationObserver(() => {
     if (location.href !== currentUrl) {
-      console.log('detectUrlChange URL:', location.href);
+      // console.log('detectUrlChange URL:', location.href);
       currentUrl = location.href;
       setup();
     }

@@ -48,11 +48,11 @@
 }
 
 #cqlSwitch:checked + span#cqlSwitchSlider {
-  background-color: var(--cql-green);
+  background-color: var(--cql-green-light);
 }
 
 #cqlSwitch:focus + span#cqlSwitchSlider {
-  box-shadow: 0 0 1px var(--cql-green);
+  box-shadow: 0 0 1px var(--cql-green-light);
 }
 
 #cqlSwitch:checked + span#cqlSwitchSlider::before {
@@ -67,14 +67,13 @@
   right: 0;
   top: 56px;
   z-index: 100;
-  background: var(--cql-green);
+  background: var(--cql-grey);
   width: 180px;
   max-height: 90vh;
   height: 100%;
   padding: 0.25rem;
   overflow-y: scroll;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   /* 1. Tell CSS to allow "discrete" properties (like display) to be transitioned */
   transition:
     transform 0.5s ease,
