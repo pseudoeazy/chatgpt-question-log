@@ -2,8 +2,6 @@ import { Question } from './utils/definitions';
 import { Message, saveQuestions } from './utils/storage';
 import { view } from './utils/ui';
 
-console.log('ChatGPT Question Log: Content script loaded.');
-
 function collectQuestions(): Question[] {
   const questionElements: NodeListOf<HTMLDivElement> =
     document.querySelectorAll('[data-message-id]');
@@ -51,7 +49,6 @@ function setup() {
     1000,
   );
 }
-setup();
 
 function handleNewQuestion() {
   waitForElements('[data-message-id]', () => {
@@ -75,7 +72,6 @@ function handleNewQuestion() {
     observer.observe(targetNode, { childList: true });
   });
 }
-handleNewQuestion();
 
 function getNavElement() {
   const composer = document.querySelector('.composer-parent');
@@ -92,7 +88,7 @@ function handleToggleSwitch() {
 
     if (navElement && headerLastElementChild) {
       const containerElement = view.createElement('div', {
-        class: 'cql-switch-container"',
+        class: 'cql-switch-container',
         id: 'cqlSwitchContainer',
       }) as HTMLDivElement;
 
@@ -118,6 +114,8 @@ function handleToggleSwitch() {
         'beforebegin',
         containerElement,
       );
+
+      checkboxEl.addEventListener('change', toggleSidebar);
     }
   }
 }
@@ -140,11 +138,17 @@ function handleSidebar() {
   if (navElement && switchEl) {
     navElement.appendChild(cqlSiderBar);
     view.renderQuestionLog(cqlSiderBar);
-
-    switchEl.addEventListener('change', () => {
-      cqlSiderBar.classList.toggle('cql-sidebar-hide');
-    });
   }
+}
+
+function toggleSidebar(e: Event): void {
+  const cqlSiderBar = document.getElementById('cqlSiderBar');
+  if (!cqlSiderBar) return;
+
+  const target = e.target as HTMLInputElement;
+  const isChecked = target.checked;
+
+  cqlSiderBar.classList.toggle('cql-sidebar-hide', !isChecked);
 }
 
 function detectUrlChange() {
@@ -160,7 +164,17 @@ function detectUrlChange() {
 
   observer.observe(document, { subtree: true, childList: true });
 }
-detectUrlChange();
+
+window.addEventListener(
+  'load',
+  function () {
+    console.log('ChatGPT Question Log: Content script loaded.');
+    setup();
+    handleNewQuestion();
+    detectUrlChange();
+  },
+  false,
+);
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === Message.TARGET_ID) {
